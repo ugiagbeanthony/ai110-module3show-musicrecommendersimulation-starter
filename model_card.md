@@ -2,35 +2,21 @@
 
 ## 1. Model Name  
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
+**VibeFinder 1.0**
+
+Goal / task: suggest the five songs from the small catalog that best match a user's preferred genre, mood, energy, tempo, and valence.
 
 ---
 
 ## 2. Intended Use  
 
-Describe what your recommender is designed to do and who it is for. 
+VibeFinder generates simple ranked recommendations for classroom exploration. It assumes that a user expresses taste through a few explicit preferences and that closeness in song attributes represents preference similarity. It is not intended for commercial music delivery or decisions with real personal or business consequences.
 
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+It should not be used to infer sensitive traits, judge people, or make recommendations from only one profile feature. Real users need more data, privacy controls, and ways to correct recommendations.
 
 ---
 
 ## 3. How the Model Works  
-
-Explain your scoring approach in simple language.  
-
-Prompts:  
-
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
 
 The model compares each song with one sample taste profile. A matching genre earns 2 points, a matching mood earns 1 point, and closer energy, tempo, and valence values earn similarity points. The recommender calculates a score for every song, sorts the scores from highest to lowest, and displays the top results with a short explanation. This is a content-based approach rather than collaborative filtering: it uses attributes of the songs instead of learning from other listeners.
 
@@ -38,58 +24,23 @@ The model compares each song with one sample taste profile. A matching genre ear
 
 ## 4. Data  
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
-
 The catalog contains 18 songs with 15 genres and several moods. Each track includes tempo, energy, valence, danceability, and acousticness. The expanded catalog is broad enough for simple demonstrations, but it is too small to represent real music preferences and does not include listening history, skips, saves, or collaborative behavior.
 
 ---
 
 ## 5. Strengths  
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+The recommender works best when genre, mood, and target energy strongly agree. Chill Lofi and Deep Intense Rock produced focused lists that matched their profiles. The score explanations also make the result easy to inspect, because each total shows exactly how genre, mood, and numerical similarity contributed.
 
 ---
 
 ## 6. Limitations and Bias 
-
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
 
 The 18-song catalog is sparse, so matching genre is very influential even though only a few tracks represent many genres. Fixed numeric targets can also produce unexpected results for conflicting preferences: a high-energy profile can rank an intense song above a happy pop song because energy similarity outweighs catalog-context differences. The model has no collaborative listening signals, short-list diversity control, freshness, or penalties for repeatedly recommending popular tracks. A profile with a mood absent from the catalog receives no mood-match points and may appear poorly represented.
 
 ---
 
 ## 7. Evaluation  
-
-How you checked whether the recommender behaved as expected. 
-
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
 
 I tested four profiles: High-Energy Pop, Chill Lofi, Deep Intense Rock, and a conflicting High-Energy Sad profile. Sunrise City ranked first for the high-energy pop profile, while Midnight Coding and Library Rain topped the chill profile. The pop and lofi outputs were clearly different because genre, mood, energy, and acoustic preference all reinforce one style.
 
@@ -133,23 +84,14 @@ Energy-weighted experiment:
 
 ## 8. Future Work  
 
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+- Add more songs from each genre so matching does not depend on a tiny catalog.
+- Add exclusion rules, taste diversity, and a clearer conflict warning for unavailable or incompatible preferences.
+- Let users provide likes, skips, and saved songs so the system can learn instead of relying only on manual targets.
 
 ---
 
 ## 9. Personal Reflection  
 
-A few sentences about your experience.  
+My biggest learning moment was seeing that a few understandable rules can produce convincing recommendations, while small changes to weights can strongly change the list. I used AI tools to brainstorm features, prompts, experimental weights, and documentation. I needed to double-check CSV data, formulas, generated output, and tests because AI suggestions were hypotheses, not proof.
 
-Prompts:  
-
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+I was surprised that simple energy similarity could make Gym Hero appear relevant to several listeners, even when their genre and mood were different. I would next add listening-history signals, diversity filtering, better profile editing, and tests comparing alternate weights across more profiles.
