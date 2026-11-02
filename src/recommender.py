@@ -93,18 +93,23 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     genre = str(user_prefs.get("favorite_genre", user_prefs.get("genre", ""))).lower()
     mood = str(user_prefs.get("favorite_mood", user_prefs.get("mood", ""))).lower()
 
+    genre_weight = float(user_prefs.get("genre_weight", 2.0))
+    mood_weight = float(user_prefs.get("mood_weight", 1.0))
+    energy_weight = float(user_prefs.get("energy_weight", 1.0))
+
     if genre and str(song["genre"]).lower() == genre:
-        score += 2.0
-        reasons.append("genre match (+2.0)")
+        score += genre_weight
+        reasons.append(f"genre match (+{genre_weight:.2f})")
 
     if mood and str(song["mood"]).lower() == mood:
-        score += 1.0
-        reasons.append("mood match (+1.0)")
+        score += mood_weight
+        reasons.append(f"mood match (+{mood_weight:.2f})")
 
     if "target_energy" in user_prefs:
         energy_similarity = max(0.0, 1.0 - abs(float(song["energy"]) - float(user_prefs["target_energy"])))
-        score += energy_similarity
-        reasons.append(f"energy similarity (+{energy_similarity:.2f})")
+        energy_points = energy_weight * energy_similarity
+        score += energy_points
+        reasons.append(f"energy similarity (+{energy_points:.2f})")
 
     if "target_tempo_bpm" in user_prefs:
         tempo_similarity = max(
