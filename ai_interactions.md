@@ -1,5 +1,18 @@
 # AI Interactions Log
 
+## Recommendation Research
+
+**Prompt:**
+
+> Research how major music streaming platforms predict the song a user is likely to love next. Explain the difference between collaborative filtering, which uses patterns from other users' behavior, and content-based filtering, which uses attributes of the songs themselves. Also identify key interaction data (likes, dislikes, skips, saves, playlists, listening history, and recency) and song-content data (genre, mood, tempo, energy, valence, danceability, and acousticness). Describe a simple example of each approach and where a hybrid recommender would be useful.
+
+**Summary of the AI-assisted analysis:**
+
+- Collaborative filtering can recommend a track liked by users with behavior similar to the current user without knowing what the audio features mean.
+- Content-based filtering compares song attributes, and is especially useful when little user-history data exists or when avoiding dependence on popularity.
+- Likes and saves are usually positive signals; skips and short listens are negative signals, but their meaning depends on context. Playlists provide stronger relationships between songs than a single interaction.
+- The simulator uses content-based reasoning with weighted genre and mood matches plus proximity scores for numerical features.
+
 > **Stretch features only.** Only fill in the sections that apply to stretch features you attempted. If you did not attempt a stretch feature, leave its section blank or delete it. This file is not required for the core project.
 
 ---

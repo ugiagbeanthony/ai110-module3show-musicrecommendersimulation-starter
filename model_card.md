@@ -32,6 +32,8 @@ Prompts:
 
 Avoid code here. Pretend you are explaining the idea to a friend who does not program.
 
+The model compares each song with one sample taste profile. A matching genre earns 2 points, a matching mood earns 1 point, and closer energy, tempo, and valence values earn similarity points. The recommender calculates a score for every song, sorts the scores from highest to lowest, and displays the top results with a short explanation. This is a content-based approach rather than collaborative filtering: it uses attributes of the songs instead of learning from other listeners.
+
 ---
 
 ## 4. Data  
@@ -44,6 +46,8 @@ Prompts:
 - What genres or moods are represented  
 - Did you add or remove data  
 - Are there parts of musical taste missing in the dataset  
+
+The catalog contains 18 songs with 15 genres and several moods. Each track includes tempo, energy, valence, danceability, and acousticness. The expanded catalog is broad enough for simple demonstrations, but it is too small to represent real music preferences and does not include listening history, skips, saves, or collaborative behavior.
 
 ---
 
