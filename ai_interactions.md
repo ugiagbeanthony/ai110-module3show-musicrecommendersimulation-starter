@@ -45,12 +45,12 @@
 
 **Which design pattern did you use?**
 
-<!-- e.g., Strategy, Factory, Observer, etc. -->
+The Strategy design pattern.
 
 **How did AI help you brainstorm or implement it?**
 
-<!-- Describe the conversation or suggestions that led to your decision -->
+AI suggested separating each ranking profile into an object with a common `apply(user_prefs)` interface. This keeps weight selection modular and lets the CLI switch between `genre-first`, `mood-first`, and `energy-focused` without changing the shared scoring or ranking loop.
 
 **How does the pattern appear in your final code?**
 
-<!-- Point to the relevant class or method -->
+`ScoringStrategy`, `GenreFirstStrategy`, `MoodFirstStrategy`, and `EnergyFocusedStrategy` are in `src/recommender.py`. `recommend_songs()` selects the requested strategy from `SCORING_STRATEGIES`, applies its weights, and performs diversity-aware ranking.

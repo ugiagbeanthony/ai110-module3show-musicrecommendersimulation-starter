@@ -2,6 +2,41 @@ import csv
 from typing import List, Dict, Tuple
 from dataclasses import dataclass
 
+
+class ScoringStrategy:
+    """Strategy interface for selecting score weights."""
+
+    def apply(self, user_prefs: Dict) -> Dict:
+        return dict(user_prefs)
+
+
+class GenreFirstStrategy(ScoringStrategy):
+    def apply(self, user_prefs: Dict) -> Dict:
+        prefs = dict(user_prefs)
+        prefs.update(genre_weight=2.0, mood_weight=1.0, energy_weight=1.0)
+        return prefs
+
+
+class MoodFirstStrategy(ScoringStrategy):
+    def apply(self, user_prefs: Dict) -> Dict:
+        prefs = dict(user_prefs)
+        prefs.update(genre_weight=1.0, mood_weight=2.0, energy_weight=1.0)
+        return prefs
+
+
+class EnergyFocusedStrategy(ScoringStrategy):
+    def apply(self, user_prefs: Dict) -> Dict:
+        prefs = dict(user_prefs)
+        prefs.update(genre_weight=1.0, mood_weight=1.0, energy_weight=2.0)
+        return prefs
+
+
+SCORING_STRATEGIES = {
+    "genre-first": GenreFirstStrategy(),
+    "mood-first": MoodFirstStrategy(),
+    "energy-focused": EnergyFocusedStrategy(),
+}
+
 @dataclass
 class Song:
     """
@@ -132,11 +167,48 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
 
     return score, reasons or ["content-based fit (no exact preference match)"]
 
-def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tuple[Dict, float, str]]:
-    """Score all songs and return the top k as ranked tuples."""
+def recommend_songs(
+    user_prefs: Dict,
+    songs: List[Dict],
+    k: int = 5,
+    mode: str = "genre-first",
+    artist_penalty: float = 0.25,
+    genre_penalty: float = 0.15,
+) -> List[Tuple[Dict, float, str]]:
+    """Score all songs and return a diverse top-k ranking."""
+    strategy = SCORING_STRATEGIES.get(mode.lower())
+    if strategy is None:
+        choices = ", ".join(SCORING_STRATEGIES)
+        raise ValueError(f"Unknown scoring mode '{mode}'. Choose one of: {choices}")
+
+    prefs = strategy.apply(user_prefs)
     ranked = []
     for song in songs:
-        score, reasons = score_song(user_prefs, song)
+        score, reasons = score_song(prefs, song)
         ranked.append((song, score, "; ".join(reasons)))
-    ranked.sort(key=lambda recommendation: (-recommendation[1], recommendation[0]["title"]))
-    return ranked[:max(0, k)]
+
+    selected = []
+    remaining = sorted(ranked, key=lambda recommendation: (-recommendation[1], recommendation[0]["title"]))
+    while remaining and len(selected) < max(0, k):
+        selected_artists = {item[0]["artist"].lower() for item in selected}
+        selected_genres = {item[0]["genre"].lower() for item in selected}
+        diverse_ranked = []
+        for song, score, explanation in remaining:
+            adjusted_score = score
+            if song["artist"].lower() in selected_artists:
+                adjusted_score -= artist_penalty
+            if song["genre"].lower() in selected_genres:
+                adjusted_score -= genre_penalty
+            diverse_ranked.append((adjusted_score, song, explanation))
+
+        _, song, explanation = min(
+            diverse_ranked,
+            key=lambda item: (-item[0], item[1]["title"]),
+        )
+        adjusted_score = next(
+            item[0] for item in diverse_ranked if item[1] is song
+        )
+        selected.append((song, adjusted_score, explanation))
+        remaining.remove(next(item for item in remaining if item[0] is song))
+
+    return selected

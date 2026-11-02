@@ -16,6 +16,8 @@ except ImportError:
 
 
 def main() -> None:
+    import sys
+
     songs = load_songs("data/songs.csv") 
 
     profiles = {
@@ -55,6 +57,15 @@ def main() -> None:
         "genre_weight": 1.0,
         "energy_weight": 2.0,
     }
+
+    mode = sys.argv[1] if len(sys.argv) > 1 else "genre-first"
+    print(f"\nScoring mode: {mode}")
+    print("Top recommendations:")
+    for song, score, explanation in recommend_songs(
+        profiles["High-Energy Pop"], songs, k=5, mode=mode
+    ):
+        print(f"{song['title']} - Score: {score:.2f}")
+        print(f"Reasons: {explanation}")
 
     for profile_name, user_prefs in profiles.items():
         print(f"\nProfile: {profile_name}")
