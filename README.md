@@ -11,7 +11,7 @@ Your goal is to:
 - Evaluate what your system gets right and wrong
 - Reflect on how this mirrors real world AI recommenders
 
-Replace this paragraph with your own summary of what your version does.
+VibeFinder 1.0 is a CLI-first content-based music recommender that scores an 18-song catalog against explicit user preferences. It prioritizes genre and mood, uses proximity scores for energy, tempo, and valence, and applies artist and genre diversity penalties before returning the top recommendations with explanations.
 
 ---
 
@@ -156,41 +156,22 @@ Night Drive Loop - Score: 1.69
 Reasons: energy similarity (+0.95); tempo similarity (+0.38); valence similarity (+0.37)
 ```
 
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or demo video link here -->
+**Screenshot or video** *(optional)*: No screenshot included; the text output above records the CLI result.
 
 ---
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
-
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+I tested High-Energy Pop, Chill Lofi, Deep Intense Rock, and a conflicting high-energy sad profile. The pop and lofi lists were clearly different, while the rock list favored Storm Runner. In an experiment, I doubled the energy weight and halved the genre weight for the pop profile; Sunrise City remained first, Rooftop Lights moved ahead of Gym Hero, and an unrelated high-energy track entered the list. This showed that energy creates variety but can reduce genre specificity.
 
 ---
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
-
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
+The recommender uses a tiny catalog, fixed weights, and no listening-history signals. It does not understand lyrics, language, artist similarity, audio quality, or broader cultural context. It can over-prioritize genre, favor a numerically similar song from the wrong style, and repeat the strongest artist or genre unless diversity penalties reduce that effect.
 
 ---
 
 ## Reflection
 
-Read and complete `model_card.md`:
-
-[**Model Card**](model_card.md)
-
-Write 1 to 2 paragraphs here about what you learned:
-
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
+This project showed that even simple weighted rules can create results that feel personalized when genre, mood, and numerical similarity are combined. It also showed where bias can enter: a small catalog, subjective mood labels, fixed thresholds, and heavy categorical weights shape the list before any learning occurs. The complete limitations and evaluation are documented in the [Model Card](model_card.md).
